@@ -1,0 +1,2 @@
+C:\Users\lebrr\Documents\School\madison\comp579\Final\cs579_FinalProject\Cast\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\lebrr\Documents\School\madison\comp579\Final\cs579_FinalProject\Cast\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt
