@@ -17,8 +17,6 @@ public class XRHandDraw : MonoBehaviour
     [SerializeField] private Color defaultColor = Color.white;
     [SerializeField] private Material defaultLineMaterial;
 
-    [SerializeField] private bool colliderTrigger = false;
-
     private Vector3 prevPointDistance = Vector3.zero;
 
     private List<Vector3> points = new List<Vector3>();
@@ -58,7 +56,6 @@ public class XRHandDraw : MonoBehaviour
         var renderer = go.GetComponent<MeshRenderer>();
         renderer.material = defaultLineMaterial;
 
-        goTubeRenderer.ColliderTrigger = colliderTrigger;
         goTubeRenderer.SetPositions(points.ToArray());
         goTubeRenderer._radiusOne = tubeDefaultWidth;
         goTubeRenderer._radiusTwo = tubeDefaultWidth;

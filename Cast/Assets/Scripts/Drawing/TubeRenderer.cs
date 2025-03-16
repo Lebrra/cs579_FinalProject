@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 // Original script taken from https://dineshpunni.notion.site/Drawing-in-XR-2a2b46869e6f46c589092045a86e8a0a
@@ -12,27 +13,12 @@ public class TubeRenderer : MonoBehaviour
     [SerializeField] public float _radiusTwo;
     [SerializeField] private bool _useWorldSpace = true;
     [SerializeField] private bool _useTwoRadii = false;
-    private bool _colliderTrigger = false;
-
-    public bool ColliderTrigger
-    {
-        get => _colliderTrigger;
-        set
-        {
-            _colliderTrigger = value;
-            if (_colliderTrigger)
-            {
-                _meshCollider.convex = value;
-                _meshCollider.isTrigger = value;
-            }
-        }
-    }
 
     private Vector3[] _vertices;
     private Mesh _mesh;
     private MeshFilter _meshFilter;
     private MeshRenderer _meshRenderer;
-    private MeshCollider _meshCollider;
+    //private MeshCollider _meshCollider;
 
     public Material material
     {
@@ -57,14 +43,6 @@ public class TubeRenderer : MonoBehaviour
         }
         _mesh = new Mesh();
         _meshFilter.mesh = _mesh;
-
-        _meshCollider = GetComponent<MeshCollider>();
-        if (_meshCollider == null)
-        {
-            _meshCollider = gameObject.AddComponent<MeshCollider>();
-            _meshCollider.sharedMesh = _mesh;
-            _meshCollider.convex = true;
-        }
     }
 
     private void OnEnable()
@@ -134,7 +112,6 @@ public class TubeRenderer : MonoBehaviour
         _mesh.RecalculateBounds();
 
         _meshFilter.mesh = _mesh;
-        _meshCollider.sharedMesh = _mesh;
     }
 
     private Vector2[] GenerateUVs()
@@ -231,5 +208,6 @@ public class TubeRenderer : MonoBehaviour
     public void OnDrawingFinished()
     {
         // todo
+        Drawing newDrawing = new Drawing(_positions.ToList(), true);
     }
 }
