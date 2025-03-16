@@ -1,17 +1,24 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
+[System.Serializable]
 public class Drawing
 {
     // center will always be defined as (0, 0)
     //Vector2 center = Vector2.zero;
+    [SerializeField]
     List<Vector2> normalPoints = new List<Vector2>();
 
-    Transform debugContainer = null;
+    Vector2 size = Vector2.zero;
+    public Vector2 Size => size;
 
     public Drawing(List<Vector3> worldPoints, bool generateDebugs = false)
     {
         if (worldPoints == null) return;
+
+        // DEBUG
+        Transform debugContainer = null;
 
         // generate regression line along x/z:
         Vector3 worldCenter = Vector3.zero;
@@ -21,7 +28,7 @@ public class Drawing
         }
         // worldCenter complete: (average of each)
         worldCenter /= worldPoints.Count;
-
+        
         float topSum = 0F, botSum = 0F;
         foreach (var point in worldPoints)
         {
@@ -85,5 +92,38 @@ public class Drawing
                 debug.transform.position = normal;
             }
         }
+
+        GenerateBounds();
+    }
+
+    void GenerateBounds()
+    {
+        float minX = normalPoints[0].x,
+            minY = normalPoints[0].y,
+            maxX = normalPoints[0].x,
+            maxY = normalPoints[0].y;
+
+        for (int i = 1; i < normalPoints.Count; i++)
+        {
+            if (minX > normalPoints[i].x)
+            {
+                minX = normalPoints[i].x;
+            }
+            if (maxX < normalPoints[i].x)
+            {
+                maxX = normalPoints[i].x;
+            }
+
+            if (minY > normalPoints[i].y)
+            {
+                minY = normalPoints[i].y;
+            }
+            if (maxY < normalPoints[i].y)
+            {
+                minY = normalPoints[i].y;
+            }
+        }
+
+        size = new Vector2(maxX - minX, maxY - minY);
     }
 }

@@ -35,8 +35,6 @@ public class XRHandDraw : MonoBehaviour
     {
         // todo: don't hardcode to right hand
         trackingHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
-
-        AddNewTubeRenderer();
     }
 
     private void Update()
@@ -57,9 +55,9 @@ public class XRHandDraw : MonoBehaviour
         renderer.material = defaultLineMaterial;
 
         goTubeRenderer.SetPositions(points.ToArray());
-        goTubeRenderer._radiusOne = tubeDefaultWidth;
-        goTubeRenderer._radiusTwo = tubeDefaultWidth;
-        goTubeRenderer._sides = tubeSides;
+        goTubeRenderer.radiusOne = tubeDefaultWidth;
+        goTubeRenderer.radiusTwo = tubeDefaultWidth;
+        goTubeRenderer.sides = tubeSides;
 
         currentTubeRenderer = goTubeRenderer;
     }
@@ -112,24 +110,5 @@ public class XRHandDraw : MonoBehaviour
         points.Add(position);
         currentTubeRenderer.SetPositions(points.ToArray());
         currentTubeRenderer.GenerateMesh();
-    }
-
-    public void UpdateLineWidth(float newValue)
-    {
-        currentTubeRenderer._radiusOne = newValue;
-        currentTubeRenderer._radiusTwo = newValue;
-        tubeDefaultWidth = newValue;
-    }
-
-    public void UpdateLineColor(Color color)
-    {
-        defaultColor = color;
-        defaultLineMaterial.color = color;
-        currentTubeRenderer.material = defaultLineMaterial;
-    }
-
-    public void UpdateLineMinDistance(float newValue)
-    {
-        minDistanceBeforeNewPoint = newValue;
     }
 }
