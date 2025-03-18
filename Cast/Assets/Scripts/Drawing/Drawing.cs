@@ -1,14 +1,32 @@
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Collections;
 using UnityEngine;
 
 [System.Serializable]
 public class Drawing
 {
+    // used to compare within Drawing
+    struct InternalDrawingCompareData
+    {
+        public int baseDrawingIndex;
+        public int compareDrawingIndex;
+        public float distance;
+    }
+
+    // used to determine if drawings are within error bounds of matching externally
+    public struct ExternalDrawingCompareData
+    {
+        public int pointCountDiff;
+        public int largestModeCount;
+        public float avgDistFromMatchingPoints;
+    }
+
     // center will always be defined as (0, 0)
     //Vector2 center = Vector2.zero;
     [SerializeField]
     List<Vector2> normalPoints = new List<Vector2>();
+    public List<Vector2> NormalPoints => normalPoints;
 
     Vector2 size = Vector2.zero;
     public Vector2 Size => size;
@@ -94,6 +112,57 @@ public class Drawing
         }
 
         GenerateBounds();
+    }
+
+    /// <summary>
+    /// returns a block of data that is the results of a comparision between two drawings
+    /// </summary>
+    public ExternalDrawingCompareData MatchDrawing(Drawing drawingToCompare)
+    {
+        //todo: scaling - may want to scale by a ratio instead of both directions seperately
+        //Vector2 scaler = size / drawingToCompare.size;
+        Vector2 scaler = Vector2.one;
+        List<Vector2> scaledComparePoints = new List<Vector2>();
+        foreach (var compareNorms in drawingToCompare.normalPoints)
+        {
+            scaledComparePoints.Add(new Vector2(compareNorms.x * scaler.x, compareNorms.y * scaler.y));
+        }
+
+        ExternalDrawingCompareData results = new ExternalDrawingCompareData
+        {
+            pointCountDiff = Mathf.Abs(drawingToCompare.normalPoints.Count - normalPoints.Count)
+        };
+
+        List<InternalDrawingCompareData> compareData = new List<InternalDrawingCompareData>();
+        bool mySetLarger = normalPoints.Count > drawingToCompare.normalPoints.Count ? true : false;
+
+        // generate a list using the larger quantity of normalPoints that map each one to the closest point on the other drawing
+        for (int i = 0; i < (mySetLarger ? normalPoints.Count : drawingToCompare.normalPoints.Count); i++)
+        {
+            InternalDrawingCompareData newCompare = new InternalDrawingCompareData
+            {
+                baseDrawingIndex = i,
+                compareDrawingIndex = 0,
+                distance = Vector2.Distance(normalPoints[i], drawingToCompare.normalPoints[0])
+            };
+
+            for (int j = 1; j < (mySetLarger ? drawingToCompare.normalPoints.Count : normalPoints.Count); j++)
+            {
+                var newDist = Vector2.Distance(normalPoints[i], drawingToCompare.normalPoints[j]);
+                if (newDist < newCompare.distance)
+                {
+                    newCompare.compareDrawingIndex = j;
+                    newCompare.distance = newDist;
+                }
+            }
+
+            compareData.Add(newCompare);
+        }
+
+        results.avgDistFromMatchingPoints = (compareData.Sum(c => c.distance) / compareData.Count);
+        results.largestModeCount = compareData.GroupBy(c => c.compareDrawingIndex).OrderByDescending(c => c.Count()).First().Count();
+
+        return results;
     }
 
     void GenerateBounds()
