@@ -1,5 +1,7 @@
 using System.Linq;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 // Original script taken from https://dineshpunni.notion.site/Drawing-in-XR-2a2b46869e6f46c589092045a86e8a0a
@@ -210,13 +212,15 @@ public class TubeRenderer : MonoBehaviour
     public void OnDrawingFinished()
     {
         drawing = new Drawing(positions.ToList(), true);
+        var drawingMan = FindAnyObjectByType<DrawingManager>();
+        if (drawingMan) drawingMan.TestForDrawingMatch(drawing);
     }
 
 #if UNITY_EDITOR
     [ContextMenu("Save Drawing Data")]
     public void GenerateSavedDrawing()
     {
-        DrawingData data = ScriptableObject.CreateInstance("DrawingData") as DrawingData;
+        DrawingData data = ScriptableObject.CreateInstance($"DrawingData") as DrawingData;
         data.AddDrawing(drawing, drawingName);
 
         AssetDatabase.CreateAsset(data, $"Assets/Resources/Drawings/Drawing_{drawingName}.asset");

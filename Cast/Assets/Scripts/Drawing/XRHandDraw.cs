@@ -35,6 +35,10 @@ public class XRHandDraw : MonoBehaviour
     {
         // todo: don't hardcode to right hand
         trackingHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
+        
+        // todo: figure out why the first drawing doesn't work well
+        AddNewTubeRenderer();
+        Destroy(currentTubeRenderer.gameObject);
     }
 
     private void Update()

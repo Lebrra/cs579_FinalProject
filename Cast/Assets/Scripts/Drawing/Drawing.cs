@@ -20,6 +20,8 @@ public class Drawing
         public int pointCountDiff;
         public int largestModeCount;
         public float avgDistFromMatchingPoints;
+        public int unmatchedPointsCount;
+        public float unmatchedPointsCountPercent;
     }
 
     // center will always be defined as (0, 0)
@@ -127,28 +129,35 @@ public class Drawing
         {
             scaledComparePoints.Add(new Vector2(compareNorms.x * scaler.x, compareNorms.y * scaler.y));
         }
+        
+        if (normalPoints.Count > drawingToCompare.normalPoints.Count) 
+            return MatchDrawing(scaledComparePoints, normalPoints);
+        else
+            return MatchDrawing(normalPoints, scaledComparePoints);
+    }
 
+    ExternalDrawingCompareData MatchDrawing(List<Vector2> smallerSet, List<Vector2> largerSet)
+    {
         ExternalDrawingCompareData results = new ExternalDrawingCompareData
         {
-            pointCountDiff = Mathf.Abs(drawingToCompare.normalPoints.Count - normalPoints.Count)
+            pointCountDiff = largerSet.Count - smallerSet.Count
         };
 
         List<InternalDrawingCompareData> compareData = new List<InternalDrawingCompareData>();
-        bool mySetLarger = normalPoints.Count > drawingToCompare.normalPoints.Count ? true : false;
 
         // generate a list using the larger quantity of normalPoints that map each one to the closest point on the other drawing
-        for (int i = 0; i < (mySetLarger ? normalPoints.Count : drawingToCompare.normalPoints.Count); i++)
+        for (int i = 0; i < largerSet.Count; i++)
         {
             InternalDrawingCompareData newCompare = new InternalDrawingCompareData
             {
                 baseDrawingIndex = i,
                 compareDrawingIndex = 0,
-                distance = Vector2.Distance(normalPoints[i], drawingToCompare.normalPoints[0])
+                distance = Vector2.Distance(largerSet[i], smallerSet[0])
             };
 
-            for (int j = 1; j < (mySetLarger ? drawingToCompare.normalPoints.Count : normalPoints.Count); j++)
+            for (int j = 1; j < smallerSet.Count; j++)
             {
-                var newDist = Vector2.Distance(normalPoints[i], drawingToCompare.normalPoints[j]);
+                var newDist = Vector2.Distance(largerSet[i], smallerSet[j]);
                 if (newDist < newCompare.distance)
                 {
                     newCompare.compareDrawingIndex = j;
@@ -159,9 +168,19 @@ public class Drawing
             compareData.Add(newCompare);
         }
 
-        results.avgDistFromMatchingPoints = (compareData.Sum(c => c.distance) / compareData.Count);
+        results.avgDistFromMatchingPoints = (compareData.Sum(c => c.distance) / compareData.Count) * 100F;  // making bigger for easier comparision
         results.largestModeCount = compareData.GroupBy(c => c.compareDrawingIndex).OrderByDescending(c => c.Count()).First().Count();
-
+        
+        // go through second set and see which points weren't matched at all
+        int unmatchedCount = 0;
+        for (int i = 0; i < smallerSet.Count; i++)
+        {
+            if (!compareData.Any(c => c.compareDrawingIndex == i))
+                unmatchedCount++;
+        }
+        results.unmatchedPointsCount = unmatchedCount;
+        results.unmatchedPointsCountPercent = (float)unmatchedCount / smallerSet.Count;
+        
         return results;
     }
 
