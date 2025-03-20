@@ -450,7 +450,6 @@ MonoBehaviour:
   matchError: 0.01
   drawingsToMatch:
   - {fileID: 11400000, guid: b6ec5f399cda5d04e89589db4d232bc6, type: 2}
-  - {fileID: 11400000, guid: c5e9e01024020a84ab5d73ff3f56907e, type: 2}
   - {fileID: 11400000, guid: 27b8f9be402e4054cbee0c64a7f30aa5, type: 2}
   - {fileID: 11400000, guid: 2a6b9fa0e20b23145852d3124c717f99, type: 2}
 --- !u!4 &1807226680

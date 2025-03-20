@@ -71,11 +71,18 @@ public class XRHandDraw : MonoBehaviour
         if (drawPoint == null)
             return;
 
-        if (!trackingHand.isValid)
+        if (trackingHand.isValid) trackingHand.TryGetFeatureValue(CommonUsages.triggerButton, out isDrawing);
+        else
         {
-            trackingHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
+#if UNITY_EDITOR
+            
+            isDrawing = UnityEngine.InputSystem.Mouse.current.leftButton.isPressed;
+            var pos = UnityEngine.InputSystem.Mouse.current.position;
+            drawPoint.transform.position = Camera.main.ScreenToWorldPoint((Vector3)pos.value + Vector3.forward);
+#else
+            return;
+#endif
         }
-        trackingHand.TryGetFeatureValue(CommonUsages.triggerButton, out isDrawing);
 
         if (isDrawing)
         {
