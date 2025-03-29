@@ -428,6 +428,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1807226680}
   - component: {fileID: 1807226679}
+  - component: {fileID: 1807226681}
   m_Layer: 0
   m_Name: DrawingManager
   m_TagString: Untagged
@@ -467,6 +468,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1807226681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1807226678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47cdb6c6d10b02449a6d14f2d3ea77cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  debugLineWidth: 0.01
+  debugColors:
+  - serializedVersion: 2
+    rgba: 4282664172
+  - serializedVersion: 2
+    rgba: 4282050876
+  - serializedVersion: 2
+    rgba: 4281977855
+  - serializedVersion: 2
+    rgba: 4294032165
+  - serializedVersion: 2
+    rgba: 4293029047
+  - serializedVersion: 2
+    rgba: 4282878951
+  - serializedVersion: 2
+    rgba: 4290801151
+  - serializedVersion: 2
+    rgba: 4294917447
+  - serializedVersion: 2
+    rgba: 4290243113
 --- !u!4 &1916318046 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5668689709192895336, guid: f6336ac4ac8b4d34bc5072418cdc62a0, type: 3}

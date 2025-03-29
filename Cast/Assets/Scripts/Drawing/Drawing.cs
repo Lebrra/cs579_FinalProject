@@ -15,6 +15,7 @@ public class Drawing
     }
 
     // used to determine if drawings are within error bounds of matching externally
+    [System.Serializable]
     public struct ExternalDrawingCompareData
     {
         public int pointCountDiff;
@@ -22,6 +23,9 @@ public class Drawing
         public float avgDistFromMatchingPoints;
         public int unmatchedPointsCount;
         public float unmatchedPointsCountPercent;
+        
+        public new string ToString => $"PointCountDiff = {pointCountDiff} | LargestModeCount = {largestModeCount} | " +
+                                      $"AvgDist = {avgDistFromMatchingPoints} | unmatchedCount = {unmatchedPointsCount} - {Mathf.Round(unmatchedPointsCountPercent * 100F)}%";
     }
 
     // center will always be defined as (0, 0)
@@ -31,7 +35,16 @@ public class Drawing
     public List<Vector2> NormalPoints => normalPoints;
 
     Vector2 size = Vector2.zero;
-    public Vector2 Size => size;
+
+    public Vector2 Size
+    {
+        get
+        {
+            if (size == Vector2.zero && normalPoints.Count > 1)
+                GenerateBounds();
+            return size;
+        }
+    }
 
     public Drawing(List<Vector3> worldPoints, bool generateDebugs = false)
     {
@@ -57,62 +70,59 @@ public class Drawing
             botSum += (x * x);
         }
         float slope = topSum / botSum;
-        Vector3 xzDirectionVector = new Vector3(1, 0, slope);
-        xzDirectionVector.Normalize();
-        Vector3 xzPerpVector = Vector3.Cross(xzDirectionVector, Vector3.up);
-        float angle = Mathf.Atan2(xzDirectionVector.x, xzDirectionVector.z);
+        Vector3 xzRegressionVector = new Vector3(1, 0, slope);
+        xzRegressionVector.Normalize();
+        Vector3 xzForwardVector = Vector3.Cross(xzRegressionVector, Vector3.up);
+        
+        // we need to see if the player is facing the same way, if not, rotate 180
+        var camForward = new Vector3(Camera.main.transform.forward.x, 0F, Camera.main.transform.forward.z);
+        camForward.Normalize();
+        float camAngle = (Mathf.Atan2(camForward.x, camForward.z) + 2 * Mathf.PI) % (2 * Mathf.PI);
+        float forwardAngle = (Mathf.Atan2(xzForwardVector.x, xzForwardVector.z) + 2 * Mathf.PI) % (2 * Mathf.PI);
+        Debug.Log($"cam = {camAngle}, forward = {forwardAngle}, diff = {camAngle - forwardAngle}");
+
+        if (Mathf.Abs(camAngle - forwardAngle) > Mathf.PI * 0.7F)
+        {
+            // flip the vectors
+            xzRegressionVector = -xzRegressionVector;
+            xzForwardVector = -xzForwardVector;
+        }
 
         //DEBUG
         if (generateDebugs)
         {
             debugContainer = new GameObject("New Drawing (debug)").transform;
-            var drawingDataContainer = new GameObject("Projection Points");
-            drawingDataContainer.transform.SetParent(debugContainer);
-            var dataPointsContainer = new GameObject("2D Data Points");
-            dataPointsContainer.transform.SetParent(debugContainer);
 
             GameObject debugCenter = new GameObject("Drawing-WorldCenter");
             debugCenter.transform.SetParent(debugContainer);
             debugCenter.transform.position = worldCenter;
 
-            Debug.DrawRay(worldCenter, xzDirectionVector, Color.blue, 500);
-            Debug.DrawRay(worldCenter, xzPerpVector, Color.red, 500);
+            Debug.DrawRay(worldCenter, xzRegressionVector, Color.red, 500);
+            Debug.DrawRay(worldCenter, xzForwardVector, Color.blue, 500);
+            
+            // todo: line renderer post-drawings
         }
 
-        // now project all the points:
+        // now project all the points:      => if facing backwards, invert x value
         for (int i = 0; i < worldPoints.Count; i++)
         {
             var worldAtY = new Vector3(worldCenter.x, worldPoints[i].y, worldCenter.z);
             var v = worldPoints[i] - worldAtY;
-            var dist = Vector3.Dot(v, xzPerpVector);
-            var proj = worldPoints[i] - dist * xzPerpVector;
-
-            //DEBUG
-            if (generateDebugs)
-            {
-                //DEBUG: create points to visualize if its right
-                GameObject debug = new GameObject($"debugPoint_{i}");
-                debug.transform.SetParent(debugContainer.GetChild(0));
-                debug.transform.position = proj;
-            }
-
-            // finally, remap the points into 2D coordinates that represent their position on the xz plane with worldCenter == (0, 0)
-            // will do this by rotating the 3D point around the worldCenter to the x axis to cancel out the z value
-            var translatedProj = proj - worldAtY;
-            normalPoints.Add(new Vector2(translatedProj.x * Mathf.Cos(-angle) - translatedProj.z * Mathf.Sin(-angle), proj.y - worldCenter.y));
+            var dist = Vector3.Dot(v, xzRegressionVector);
+            normalPoints.Add(new Vector2(dist, worldPoints[i].y - worldCenter.y));
         }
 
-        //DEBUG: show processed 2D points
-        if (generateDebugs)
+        GenerateBounds();
+
+        if (generateDebugs && DebugDrawer.Instance)
         {
-            foreach (var normal in normalPoints)
-            {
-                GameObject debug = new GameObject($"normalPoint");
-                debug.transform.SetParent(debugContainer.GetChild(1));
-                debug.transform.position = normal;
-            }
-        }
+            DebugDrawer.Instance.DrawDrawing(this, 8);
+        } 
+    }
 
+    public Drawing(List<Vector2> scaledPoints)
+    {
+        normalPoints = scaledPoints;
         GenerateBounds();
     }
 
@@ -121,13 +131,19 @@ public class Drawing
     /// </summary>
     public ExternalDrawingCompareData MatchDrawing(Drawing drawingToCompare)
     {
-        //todo: scaling - may want to scale by a ratio instead of both directions seperately
-        //Vector2 scaler = size / drawingToCompare.size;
-        Vector2 scaler = Vector2.one;
+        float scaler = Size.x / drawingToCompare.Size.x;
+        
+        //Vector2 scaler = Size / drawingToCompare.Size;
         List<Vector2> scaledComparePoints = new List<Vector2>();
         foreach (var compareNorms in drawingToCompare.normalPoints)
         {
-            scaledComparePoints.Add(new Vector2(compareNorms.x * scaler.x, compareNorms.y * scaler.y));
+            scaledComparePoints.Add(new Vector2(compareNorms.x * scaler, compareNorms.y * scaler));
+        }
+
+        if (DebugDrawer.Instance)
+        {
+            Drawing debugDrawing = new Drawing(scaledComparePoints);
+            DebugDrawer.Instance.DrawDrawing(debugDrawing, 7);
         }
         
         if (normalPoints.Count > drawingToCompare.normalPoints.Count) 
@@ -208,7 +224,7 @@ public class Drawing
             }
             if (maxY < normalPoints[i].y)
             {
-                minY = normalPoints[i].y;
+                maxY = normalPoints[i].y;
             }
         }
 
