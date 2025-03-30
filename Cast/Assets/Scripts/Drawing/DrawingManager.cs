@@ -28,10 +28,10 @@ public class DrawingManager : MonoBehaviour
 
     private void Start()
     {
-        DebugDrawer.Instance?.DrawAllSavedDrawings(drawingsToMatch);
+        //DebugDrawer.Instance?.DrawAllSavedDrawings(drawingsToMatch);
     }
 
-    public DrawingData TestForDrawingMatch(Drawing drawing)
+    public DrawingData TestForDrawingMatch(Drawing drawing, Vector3 position)
     {
         // iterate through every drawingsToMatch to test for a match
         // return best-matched drawing data (or none if bad)
@@ -61,6 +61,10 @@ public class DrawingManager : MonoBehaviour
         {
             Debug.Log($"I think the closest match is the {drawingsToMatch[match].name}");
             Debug.Log(latestCompareData[match].ToString);
+            if (DebugDrawer.Instance)
+            {
+                DebugDrawer.Instance.DrawDrawing(drawingsToMatch[match].Drawing, position, match);
+            }
             return drawingsToMatch[match];
         }
     }

@@ -116,7 +116,7 @@ public class Drawing
 
         if (generateDebugs && DebugDrawer.Instance)
         {
-            DebugDrawer.Instance.DrawDrawing(this, 8);
+            //DebugDrawer.Instance.DrawDrawing(this, 8);
         } 
     }
 
@@ -143,7 +143,7 @@ public class Drawing
         if (DebugDrawer.Instance)
         {
             Drawing debugDrawing = new Drawing(scaledComparePoints);
-            DebugDrawer.Instance.DrawDrawing(debugDrawing, 7);
+            //DebugDrawer.Instance.DrawDrawing(debugDrawing, 7);
         }
         
         if (normalPoints.Count > drawingToCompare.normalPoints.Count) 

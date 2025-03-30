@@ -30,6 +30,19 @@ public class TubeRenderer : MonoBehaviour
         set { meshRenderer.material = value; }
     }
 
+    Vector3 Center {
+        get
+        {
+            Vector3 worldCenter = Vector3.zero;
+            foreach (var point in positions)
+            {
+                worldCenter += point;
+            }
+            worldCenter /= positions.Length;
+            return worldCenter;
+        }
+    }
+
     private void Awake()
     {
         meshFilter = GetComponent<MeshFilter>();
@@ -213,7 +226,7 @@ public class TubeRenderer : MonoBehaviour
     {
         drawing = new Drawing(positions.ToList(), true);
         var drawingMan = FindAnyObjectByType<DrawingManager>();
-        if (drawingMan) drawingMan.TestForDrawingMatch(drawing);
+        if (drawingMan) drawingMan.TestForDrawingMatch(drawing, Center);
     }
 
 #if UNITY_EDITOR
