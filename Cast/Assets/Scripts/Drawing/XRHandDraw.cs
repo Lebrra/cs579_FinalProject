@@ -17,8 +17,6 @@ public class XRHandDraw : MonoBehaviour
     [SerializeField] private Color defaultColor = Color.white;
     [SerializeField] private Material defaultLineMaterial;
 
-    [SerializeField] private bool colliderTrigger = false;
-
     private Vector3 prevPointDistance = Vector3.zero;
 
     private List<Vector3> points = new List<Vector3>();
@@ -37,8 +35,10 @@ public class XRHandDraw : MonoBehaviour
     {
         // todo: don't hardcode to right hand
         trackingHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
-
+        
+        // todo: figure out why the first drawing doesn't work well
         AddNewTubeRenderer();
+        Destroy(currentTubeRenderer.gameObject);
     }
 
     private void Update()
@@ -58,11 +58,10 @@ public class XRHandDraw : MonoBehaviour
         var renderer = go.GetComponent<MeshRenderer>();
         renderer.material = defaultLineMaterial;
 
-        goTubeRenderer.ColliderTrigger = colliderTrigger;
         goTubeRenderer.SetPositions(points.ToArray());
-        goTubeRenderer._radiusOne = tubeDefaultWidth;
-        goTubeRenderer._radiusTwo = tubeDefaultWidth;
-        goTubeRenderer._sides = tubeSides;
+        goTubeRenderer.radiusOne = tubeDefaultWidth;
+        goTubeRenderer.radiusTwo = tubeDefaultWidth;
+        goTubeRenderer.sides = tubeSides;
 
         currentTubeRenderer = goTubeRenderer;
     }
@@ -72,11 +71,28 @@ public class XRHandDraw : MonoBehaviour
         if (drawPoint == null)
             return;
 
-        if (!trackingHand.isValid)
+        // if assignment failed try again (todo: don't hardcode right hand)
+        if (!trackingHand.isValid) trackingHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
+        
+        if (trackingHand.isValid) trackingHand.TryGetFeatureValue(CommonUsages.triggerButton, out isDrawing);
+        else
         {
-            trackingHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
+#if UNITY_EDITOR
+            
+            isDrawing = UnityEngine.InputSystem.Mouse.current.leftButton.isPressed;
+            if (isDrawing)
+            {
+                var pos = UnityEngine.InputSystem.Mouse.current.position;
+                drawPoint.transform.position = Camera.main.ScreenToWorldPoint((Vector3)pos.value + Vector3.forward);
+            }
+            else
+            {
+                drawPoint.transform.localPosition = Vector3.zero;
+            }
+#else
+            return;
+#endif
         }
-        trackingHand.TryGetFeatureValue(CommonUsages.triggerButton, out isDrawing);
 
         if (isDrawing)
         {
@@ -115,24 +131,5 @@ public class XRHandDraw : MonoBehaviour
         points.Add(position);
         currentTubeRenderer.SetPositions(points.ToArray());
         currentTubeRenderer.GenerateMesh();
-    }
-
-    public void UpdateLineWidth(float newValue)
-    {
-        currentTubeRenderer._radiusOne = newValue;
-        currentTubeRenderer._radiusTwo = newValue;
-        tubeDefaultWidth = newValue;
-    }
-
-    public void UpdateLineColor(Color color)
-    {
-        defaultColor = color;
-        defaultLineMaterial.color = color;
-        currentTubeRenderer.material = defaultLineMaterial;
-    }
-
-    public void UpdateLineMinDistance(float newValue)
-    {
-        minDistanceBeforeNewPoint = newValue;
     }
 }
