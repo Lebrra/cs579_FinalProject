@@ -1,0 +1,106 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4983803467764709304
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4724700187465913309}
+  - component: {fileID: 3254227650094231716}
+  - component: {fileID: 1390677043637549736}
+  - component: {fileID: 5203564850252649691}
+  m_Layer: 0
+  m_Name: DrawingManager_Debug
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4724700187465913309
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4983803467764709304}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.029631505, y: -0.1518217, z: -0.8782073}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3254227650094231716
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4983803467764709304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 292a3e8fe907ef741a432c10550da6d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  matchError: 0.01
+  drawingsToMatch:
+  - {fileID: 11400000, guid: b6ec5f399cda5d04e89589db4d232bc6, type: 2}
+  - {fileID: 11400000, guid: 27b8f9be402e4054cbee0c64a7f30aa5, type: 2}
+  - {fileID: 11400000, guid: 2a6b9fa0e20b23145852d3124c717f99, type: 2}
+  latestCompareData: []
+--- !u!114 &1390677043637549736
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4983803467764709304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 47cdb6c6d10b02449a6d14f2d3ea77cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugMaterial: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  debugLineWidth: 0.01
+  debugColors:
+  - serializedVersion: 2
+    rgba: 4282664172
+  - serializedVersion: 2
+    rgba: 4282050876
+  - serializedVersion: 2
+    rgba: 4281977855
+  - serializedVersion: 2
+    rgba: 4294032165
+  - serializedVersion: 2
+    rgba: 4293029047
+  - serializedVersion: 2
+    rgba: 4282878951
+  - serializedVersion: 2
+    rgba: 4290801151
+  - serializedVersion: 2
+    rgba: 4294917447
+  - serializedVersion: 2
+    rgba: 4290243113
+--- !u!114 &5203564850252649691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4983803467764709304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a1e19488f715b547b67863584371712, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minDistanceBeforeNewPoint: 0.008
+  tubeDefaultWidth: 0.01
+  tubeSides: 8
+  defaultColor: {r: 1, g: 1, b: 1, a: 1}
+  defaultLineMaterial: {fileID: 2100000, guid: b58887cdef4f76c4fb5cb697f677e650, type: 2}
+  drawPoint: {fileID: 0}
+  isDrawing: 0
