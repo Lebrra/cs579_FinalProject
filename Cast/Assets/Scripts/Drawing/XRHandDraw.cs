@@ -2,12 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactables;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 // Original script taken from https://dineshpunni.notion.site/Drawing-in-XR-2a2b46869e6f46c589092045a86e8a0a
 // Video followed: https://www.youtube.com/watch?v=JZFfKTYSt7k
-public class XRHandDraw : MonoBehaviour
+public class XRHandDraw : XRGrabInteractable
 {
-    [SerializeField] private InputDevice trackingHand;
+    [Space, Header("Drawing")]
+    private InputDevice trackingHand;
+    private bool ableToDraw = false;
 
     [SerializeField] private float minDistanceBeforeNewPoint = 0.008f;
 
@@ -27,18 +32,31 @@ public class XRHandDraw : MonoBehaviour
     [SerializeField]    // todo: assuming a wand will be the draw point, so not adding one for left and right hands
     private Transform drawPoint = null;
 
-    [SerializeField, Header("TESTING")]
-    private bool isDrawing = false;
+    bool isDrawing = false;
     bool wasDrawing = false;
 
     private void Start()
     {
-        // todo: don't hardcode to right hand
-        trackingHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
-        
-        // todo: figure out why the first drawing doesn't work well
         AddNewTubeRenderer();
         Destroy(currentTubeRenderer.gameObject);
+    }
+
+    protected override void OnSelectEntering(SelectEnterEventArgs args)
+    {
+        base.OnSelectEntering(args);
+
+        // select current hand:
+        XRNode hand = args.interactorObject.handedness == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
+        trackingHand = InputDevices.GetDeviceAtXRNode(hand);
+        ableToDraw = trackingHand.isValid;
+    }
+
+    protected override void OnSelectExiting(SelectExitEventArgs args)
+    {
+        base.OnSelectExiting(args);
+
+        // stop ability to draw
+        ableToDraw = false;
     }
 
     private void Update()
@@ -71,10 +89,7 @@ public class XRHandDraw : MonoBehaviour
         if (drawPoint == null)
             return;
 
-        // if assignment failed try again (todo: don't hardcode right hand)
-        if (!trackingHand.isValid) trackingHand = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
-        
-        if (trackingHand.isValid) trackingHand.TryGetFeatureValue(CommonUsages.triggerButton, out isDrawing);
+        if (ableToDraw) trackingHand.TryGetFeatureValue(CommonUsages.triggerButton, out isDrawing);
         else
         {
 #if UNITY_EDITOR
