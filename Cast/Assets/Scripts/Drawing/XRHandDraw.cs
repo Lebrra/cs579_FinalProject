@@ -29,14 +29,25 @@ public class XRHandDraw : XRGrabInteractable
 
     private TubeRenderer currentTubeRenderer;
 
-    [SerializeField]    // todo: assuming a wand will be the draw point, so not adding one for left and right hands
+    [SerializeField]
     private Transform drawPoint = null;
+    private Transform debugDrawPoint = null;
+    
+    [SerializeField]
+    private bool enableMouseDrawing = false;
 
     bool isDrawing = false;
     bool wasDrawing = false;
 
     private void Start()
     {
+#if UNITY_EDITOR
+        debugDrawPoint = new GameObject("Debug_MouseDrawer").transform;
+        debugDrawPoint.position = Vector3.zero;
+#else
+        enableMouseDrawing = false;
+#endif
+        
         AddNewTubeRenderer();
         Destroy(currentTubeRenderer.gameObject);
     }
@@ -88,26 +99,21 @@ public class XRHandDraw : XRGrabInteractable
     {
         if (drawPoint == null)
             return;
-
-        if (ableToDraw) trackingHand.TryGetFeatureValue(CommonUsages.triggerButton, out isDrawing);
-        else
+        
+        if (enableMouseDrawing)    // editor only
         {
-#if UNITY_EDITOR
-            
             isDrawing = UnityEngine.InputSystem.Mouse.current.leftButton.isPressed;
             if (isDrawing)
             {
                 var pos = UnityEngine.InputSystem.Mouse.current.position;
-                drawPoint.transform.position = Camera.main.ScreenToWorldPoint((Vector3)pos.value + Vector3.forward);
+                debugDrawPoint.transform.position = Camera.main.ScreenToWorldPoint((Vector3)pos.value + Vector3.forward);
             }
             else
             {
-                drawPoint.transform.localPosition = Vector3.zero;
+                debugDrawPoint.transform.localPosition = Vector3.zero;
             }
-#else
-            return;
-#endif
         }
+        else if (ableToDraw) trackingHand.TryGetFeatureValue(CommonUsages.triggerButton, out isDrawing);
 
         if (isDrawing)
         {
@@ -116,7 +122,7 @@ public class XRHandDraw : XRGrabInteractable
                 AddNewTubeRenderer();
             }
 
-            UpdateTube();
+            UpdateTube(enableMouseDrawing ? debugDrawPoint : drawPoint);
         }
         if (!isDrawing && wasDrawing)   // drawing ended!
         {
@@ -127,16 +133,16 @@ public class XRHandDraw : XRGrabInteractable
         wasDrawing = isDrawing;
     }
 
-    private void UpdateTube()
+    private void UpdateTube(Transform refPoint)
     {
         if (prevPointDistance == Vector3.zero)
         {
-            prevPointDistance = drawPoint.transform.position;
+            prevPointDistance = refPoint.transform.position;
         }
 
-        if (Vector3.Distance(prevPointDistance, drawPoint.transform.position) >= minDistanceBeforeNewPoint)
+        if (Vector3.Distance(prevPointDistance, refPoint.transform.position) >= minDistanceBeforeNewPoint)
         {
-            prevPointDistance = drawPoint.transform.position;
+            prevPointDistance = refPoint.transform.position;
             AddPoint(prevPointDistance);
         }
     }
