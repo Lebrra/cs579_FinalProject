@@ -390,6 +390,31 @@ MonoBehaviour:
   maxValidUnmatchedPercent: 0.5
   maxValidMode: 16
   maxValidDist: 3
+  castingShrinkCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.700057
+      outSlope: 3.700057
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.0375
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: -0.815565
+      outSlope: -0.815565
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.21249998
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  castingTime: 1
 --- !u!114 &6774844212885588093
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -397,7 +422,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4942990717810252387}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 47cdb6c6d10b02449a6d14f2d3ea77cf, type: 3}
   m_Name: 

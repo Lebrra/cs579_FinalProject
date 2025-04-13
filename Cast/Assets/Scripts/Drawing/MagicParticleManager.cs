@@ -7,7 +7,11 @@ public class MagicParticleManager : MonoBehaviour
     public enum Particle  // for referencing which particle should be shown -> index matches particlePrefabs list
     {
         None,
-        DrawingStars
+        DrawingStars,
+        Mountain,
+        Eye,
+        Ice,
+        Wind
     }
     
     public static MagicParticleManager Instance;
@@ -45,7 +49,7 @@ public class MagicParticleManager : MonoBehaviour
         else
         {
             // create new particle
-            particle = Instantiate(particlePrefabs[(int)type - 1]);
+            particle = Instantiate(particlePrefabs[(int)type - 1], transform);
         }
         
         // visualize particle

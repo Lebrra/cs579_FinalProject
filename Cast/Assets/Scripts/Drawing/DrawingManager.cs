@@ -24,6 +24,15 @@ public class DrawingManager : MonoBehaviour
     int maxValidMode = 14;
     [SerializeField, Tooltip("The highest average distance from a point to its assigned matching point that is good enough for the drawing to match")]
     float maxValidDist = 3F;
+    
+    [Space]
+    [SerializeField, Header("Casting Animations")]
+    AnimationCurve castingShrinkCurve;
+    [SerializeField]
+    float castingTime = 2F;
+    
+    public AnimationCurve ShrinkCurve => castingShrinkCurve;
+    public float CastTime => castingTime;
 
     private void Awake()
     {
