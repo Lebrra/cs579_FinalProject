@@ -8,7 +8,7 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 // Original script taken from https://dineshpunni.notion.site/Drawing-in-XR-2a2b46869e6f46c589092045a86e8a0a
 // Video followed: https://www.youtube.com/watch?v=JZFfKTYSt7k
-public class XRHandDraw : XRGrabInteractable
+public class WandDrawer : XRGrabInteractable
 {
     [Space, Header("Drawing")]
     private InputDevice trackingHand;
@@ -18,8 +18,7 @@ public class XRHandDraw : XRGrabInteractable
 
     [SerializeField] private float tubeDefaultWidth = 0.010f;
     [SerializeField] private int tubeSides = 8;
-
-    [SerializeField] private Color defaultColor = Color.white;
+    
     [SerializeField] private Material defaultLineMaterial;
 
     private Vector3 prevPointDistance = Vector3.zero;

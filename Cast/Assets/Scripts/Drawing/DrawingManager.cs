@@ -7,10 +7,7 @@ using UnityEngine;
 public class DrawingManager : MonoBehaviour
 {
     public static DrawingManager Instance = null;
-
-
-    [SerializeField, Tooltip("Value to be under for a drawing to be considered 'matching' to another")] // TODO: reword this when the number makes sense
-    float matchError = 0.01F;
+    
     [SerializeField]
     List<DrawingData> drawingsToMatch = new List<DrawingData>();
     
