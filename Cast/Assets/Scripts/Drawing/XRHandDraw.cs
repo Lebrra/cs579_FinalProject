@@ -38,6 +38,8 @@ public class XRHandDraw : XRGrabInteractable
 
     bool isDrawing = false;
     bool wasDrawing = false;
+    
+    int particleCounter = 0;
 
     private void Start()
     {
@@ -152,5 +154,9 @@ public class XRHandDraw : XRGrabInteractable
         points.Add(position);
         currentTubeRenderer.SetPositions(points.ToArray());
         currentTubeRenderer.GenerateMesh();
+        
+        // particles for fun, but don't do them on every single vertex
+        particleCounter = (particleCounter + 1) % 5;
+        if (particleCounter == 0) MagicParticleManager.Instance?.GetParticle(MagicParticleManager.Particle.DrawingStars, position);
     }
 }

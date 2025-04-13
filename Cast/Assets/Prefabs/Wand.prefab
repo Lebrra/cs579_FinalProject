@@ -301,7 +301,7 @@ MonoBehaviour:
   tubeDefaultWidth: 0.01
   tubeSides: 8
   defaultColor: {r: 1, g: 1, b: 1, a: 1}
-  defaultLineMaterial: {fileID: 2100000, guid: b58887cdef4f76c4fb5cb697f677e650, type: 2}
+  defaultLineMaterial: {fileID: 2100000, guid: acd227a9427627e4aa39b8f812bb6e2c, type: 2}
   drawPoint: {fileID: 6137897499396463422}
   enableMouseDrawing: 0
 --- !u!1 &3180658687953180067
