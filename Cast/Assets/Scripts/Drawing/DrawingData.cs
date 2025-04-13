@@ -7,11 +7,12 @@ public class DrawingData : ScriptableObject
     [SerializeField]
     string drawingName = "none";
     [SerializeField]
-    Color32 drawingColor = Color.white;
+    Material drawingMaterial = null;
     [SerializeField]
     Drawing drawing = null;
 
     public Drawing Drawing => drawing;
+    public Material DrawingMaterial => drawingMaterial;
 
     public void AddDrawing(Drawing newDrawing, string name)
     {

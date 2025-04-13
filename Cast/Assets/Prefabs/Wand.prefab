@@ -382,10 +382,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   matchError: 0.01
   drawingsToMatch:
-  - {fileID: 11400000, guid: b6ec5f399cda5d04e89589db4d232bc6, type: 2}
-  - {fileID: 11400000, guid: 27b8f9be402e4054cbee0c64a7f30aa5, type: 2}
-  - {fileID: 11400000, guid: 2a6b9fa0e20b23145852d3124c717f99, type: 2}
+  - {fileID: 11400000, guid: 85f44e5f8eebc064b9738974651a4a92, type: 2}
+  - {fileID: 11400000, guid: ebf2f6196ab1a4445822106ecd5dcf4e, type: 2}
+  - {fileID: 11400000, guid: 75c50f54cad29b546873f6cbf841c731, type: 2}
+  - {fileID: 11400000, guid: ed5f9b013ed0b554fbc7aed52005eab6, type: 2}
   latestCompareData: []
+  maxValidUnmatchedPercent: 0.5
+  maxValidMode: 16
+  maxValidDist: 3
 --- !u!114 &6774844212885588093
 MonoBehaviour:
   m_ObjectHideFlags: 0
