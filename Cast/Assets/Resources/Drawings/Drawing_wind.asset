@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawingName: wind2
   drawingMaterial: {fileID: 2100000, guid: c4cd7f828ab6d434cbcba22590182f44, type: 2}
+  particleName: 5
   drawing:
     normalPoints:
     - {x: -0.27545613, y: 0.04588008}

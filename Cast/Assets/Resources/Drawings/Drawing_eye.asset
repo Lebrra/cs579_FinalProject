@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawingName: eye
   drawingMaterial: {fileID: 2100000, guid: 63f1934b53bc53846ac1cc3a06e61d56, type: 2}
+  particleName: 3
   drawing:
     normalPoints:
     - {x: -0.24247628, y: -0.044841886}

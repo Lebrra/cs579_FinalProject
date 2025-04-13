@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   drawingName: ice2
   drawingMaterial: {fileID: 2100000, guid: 882dfc30bd038754fae9c85bdea9bff9, type: 2}
+  particleName: 4
   drawing:
     normalPoints:
     - {x: -0.102767885, y: -0.003181696}
