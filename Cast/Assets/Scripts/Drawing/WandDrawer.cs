@@ -33,6 +33,12 @@ public class WandDrawer : XRGrabInteractable
     private Transform debugDrawPoint = null;
     
     [SerializeField]
+    private float hoverSpeed = 1F;
+    [SerializeField]
+    private float hoverDist = 1F;
+    Coroutine hoverRoutine = null;
+    
+    [SerializeField]
     private bool enableMouseDrawing = false;
 
     bool isDrawing = false;
@@ -51,10 +57,21 @@ public class WandDrawer : XRGrabInteractable
         
         AddNewTubeRenderer();
         Destroy(currentTubeRenderer.gameObject);
+        
+        if (hoverRoutine == null)
+        {
+            hoverRoutine = StartCoroutine(Hover());
+        }
     }
 
     protected override void OnSelectEntering(SelectEnterEventArgs args)
     {
+        if (hoverRoutine != null)
+        {
+            StopCoroutine(hoverRoutine);
+            hoverRoutine = null;
+        }
+        
         base.OnSelectEntering(args);
 
         // select current hand:
@@ -69,6 +86,11 @@ public class WandDrawer : XRGrabInteractable
 
         // stop ability to draw
         ableToDraw = false;
+
+        if (hoverRoutine == null)
+        {
+            hoverRoutine = StartCoroutine(Hover());
+        }
     }
 
     private void Update()
@@ -157,5 +179,20 @@ public class WandDrawer : XRGrabInteractable
         // particles for fun, but don't do them on every single vertex
         particleCounter = (particleCounter + 1) % 5;
         if (particleCounter == 0) MagicParticleManager.Instance?.GetParticle(MagicParticleManager.Particle.DrawingStars, position);
+    }
+
+    IEnumerator Hover()
+    {
+        float startY = transform.position.y;
+        float time = 0F;
+        while (true)
+        {
+            time = (time + Time.deltaTime) % hoverSpeed;
+            float current = time / hoverSpeed;  // %
+            float sinOffset = Mathf.Sin(current * 2 * Mathf.PI);
+            
+            transform.position = new Vector3(transform.position.x, startY + (sinOffset * hoverDist), transform.position.z);
+            yield return null;
+        }
     }
 }
