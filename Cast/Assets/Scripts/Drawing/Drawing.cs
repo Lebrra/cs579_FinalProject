@@ -51,6 +51,7 @@ public class Drawing
         if (worldPoints == null) return;
 
         // DEBUG
+        if (!DebugDrawer.Instance) generateDebugs = false;
         Transform debugContainer = null;
 
         // generate regression line along x/z:

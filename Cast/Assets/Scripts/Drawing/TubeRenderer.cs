@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -226,7 +227,72 @@ public class TubeRenderer : MonoBehaviour
     {
         drawing = new Drawing(positions.ToList(), true);
         var drawingMan = FindAnyObjectByType<DrawingManager>();
-        if (drawingMan) drawingMan.TestForDrawingMatch(drawing, Center);
+        if (drawingMan)
+        {
+            var result = drawingMan.TestForDrawingMatch(drawing, Center);
+            if (result != null)
+            {
+                // generate a new 3D drawing identical to this one but with the match's material, also tell ??? to start doing magic
+                var copy = Instantiate(gameObject).GetComponent<TubeRenderer>();
+                copy.GenerateCompletedMesh(result.DrawingMaterial, gameObject);
+                gameObject.SetActive(false);
+                MagicParticleManager.Instance?.GetParticle(result.Particle, Center);
+            }
+            else if (!DebugDrawer.Instance)
+            {
+                StartCoroutine(TweenOut(null));
+            }
+        }
+    }
+
+
+    public void GenerateCompletedMesh(Material mat, GameObject orgRef)
+    {
+        radiusOne *= 0.95F;
+        radiusTwo *= 0.95F;
+        meshRenderer.material = mat;
+        GenerateMesh();
+        
+        StartCoroutine(TweenOut(orgRef));
+    }
+
+    IEnumerator TweenOut(GameObject orgRef, System.Action postAction = null) // might convert to mid-action to happen halfway through instead
+    {
+        // goal: have the spell bob for a bit before shrinking and disappearing
+        var shrinkCurve = DrawingManager.Instance?.ShrinkCurve ?? AnimationCurve.Linear(0F, 0F, 1F, 1F);
+        
+        // generate a center to use at the parent (so we shrink around it)
+        var parent = new GameObject($"{name}_Parent").transform;
+        parent.position = Center;
+        transform.SetParent(parent);
+        
+        // delay shrink if match found
+        if (orgRef != null)
+        {
+            yield return new WaitForSeconds(1F);
+        }
+
+        // now shrink
+        float fullShrinkTime = DrawingManager.Instance?.CastTime ?? 2F;
+        float shrinkTime = fullShrinkTime;
+        while (shrinkTime > 0F)
+        {
+            shrinkTime = Mathf.Clamp(shrinkTime - Time.deltaTime, 0F, shrinkTime);
+            var curvePercent = shrinkTime / fullShrinkTime;  // will be going through the curve backwards
+            parent.localScale = Vector3.one * (shrinkCurve.Evaluate(curvePercent));
+            yield return null;
+        }
+        
+        // onto whatever happens next
+        postAction?.Invoke();
+        
+        // all done shrinking => cleanup time (ideally would like TubeRenderers to be using object pooling too, but eh
+        transform.gameObject.SetActive(false);
+        if (!DebugDrawer.Instance)  // don't destroy these if we are debugging
+        {
+            if (orgRef) Destroy(orgRef);
+            Destroy(parent.gameObject);
+        }
     }
 
 #if UNITY_EDITOR

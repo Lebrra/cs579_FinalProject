@@ -7,15 +7,29 @@ using UnityEngine;
 public class DrawingManager : MonoBehaviour
 {
     public static DrawingManager Instance = null;
-
-
-    [SerializeField, Tooltip("Value to be under for a drawing to be considered 'matching' to another")] // TODO: reword this when the number makes sense
-    float matchError = 0.01F;
+    
     [SerializeField]
     List<DrawingData> drawingsToMatch = new List<DrawingData>();
     
     [SerializeField, ReadOnly]
     List<Drawing.ExternalDrawingCompareData> latestCompareData = new();
+    
+    [Space]
+    [SerializeField, Tooltip("The highest % that a match can have before its considered not good enough for the drawing to match")]
+    float maxValidUnmatchedPercent = 0.5F;
+    [SerializeField, Tooltip("The max amount of points that can map to a single point on the actual drawing that is good enough for the drawing to match")]
+    int maxValidMode = 14;
+    [SerializeField, Tooltip("The highest average distance from a point to its assigned matching point that is good enough for the drawing to match")]
+    float maxValidDist = 3F;
+    
+    [Space]
+    [SerializeField, Header("Casting Animations")]
+    AnimationCurve castingShrinkCurve;
+    [SerializeField]
+    float castingTime = 2F;
+    
+    public AnimationCurve ShrinkCurve => castingShrinkCurve;
+    public float CastTime => castingTime;
 
     private void Awake()
     {
@@ -43,16 +57,51 @@ public class DrawingManager : MonoBehaviour
             latestCompareData.Add(savedDrawing.Drawing.MatchDrawing(drawing));
         }
         
-        int match = 0;
+        int distMatch = 0, vertsMatch = 0, modeMatch = 0;
         for (int i = 1; i < latestCompareData.Count; i++)
         {
-            if (latestCompareData[i].avgDistFromMatchingPoints < latestCompareData[match].avgDistFromMatchingPoints)
+            if (latestCompareData[i].avgDistFromMatchingPoints < latestCompareData[distMatch].avgDistFromMatchingPoints)
             {
-                match = i;
+                distMatch = i;
+            }
+            
+            // smaller unmatched points == more points matched with drawing points
+            if (latestCompareData[i].unmatchedPointsCountPercent < latestCompareData[vertsMatch].unmatchedPointsCountPercent)
+            {
+                vertsMatch = i;
+            }
+            
+            // smallest mode == more points matched uniquely
+            if (latestCompareData[i].largestModeCount < latestCompareData[modeMatch].largestModeCount)
+            {
+                modeMatch = i;
             }
         }
 
-        if (latestCompareData[match].avgDistFromMatchingPoints > 3F)
+        int match = -1;
+        // first check if there are no good options (=> no drawing picked)
+        if (latestCompareData[distMatch].avgDistFromMatchingPoints < maxValidDist &&
+            latestCompareData[vertsMatch].largestModeCount < maxValidMode &&
+            latestCompareData[modeMatch].unmatchedPointsCountPercent < maxValidUnmatchedPercent)
+        {
+            // if majority on any, then choose that one:
+            if (distMatch == vertsMatch || distMatch == modeMatch)
+            {
+                match = distMatch;
+            }
+            else if (vertsMatch == modeMatch)
+            {
+                match = vertsMatch;
+            }
+            else
+            {
+                // we are conflicted ! 
+                Debug.Log("help");
+            }
+        }
+        
+        
+        if (match < 0)
         {
             Debug.Log("I don't think any match");
             return null;
