@@ -226,10 +226,9 @@ public class TubeRenderer : MonoBehaviour
     public void OnDrawingFinished()
     {
         drawing = new Drawing(positions.ToList(), true);
-        var drawingMan = FindAnyObjectByType<DrawingManager>();
-        if (drawingMan)
+        if (DrawingManager.Instance)
         {
-            var result = drawingMan.TestForDrawingMatch(drawing, Center);
+            var result = DrawingManager.Instance.TestForDrawingMatch(drawing, Center);
             if (result != null)
             {
                 // generate a new 3D drawing identical to this one but with the match's material, also tell ??? to start doing magic
@@ -269,7 +268,9 @@ public class TubeRenderer : MonoBehaviour
         // delay shrink if match found
         if (orgRef != null)
         {
-            yield return new WaitForSeconds(1F);
+            yield return new WaitForSeconds(0.2F);
+            FishingManager.Instance?.ThrowBobber(Center, MagicParticleManager.Particle.None);
+            yield return new WaitForSeconds(0.2F);
         }
 
         // now shrink
