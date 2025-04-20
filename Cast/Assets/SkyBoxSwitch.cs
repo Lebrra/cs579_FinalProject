@@ -1,36 +1,44 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.UI;    
 
-public class SkyBoxSwitch : MonoBehaviour
+public class SkyboxSwitcher : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-     public Material skybox_day;
-    public Material skybox_night;
+    [Header("Skybox Materials")]
+    [Tooltip("Assign your Day skybox Material here")]
+    public Material dayMaterial;
+    [Tooltip("Assign your Night skybox Material here")]
+    public Material nightMaterial;
 
-    private bool isDay = true;
-    private SkyboxController inputActions; 
+    [Header("UI")]
+    [Tooltip("Drag your Day/Night Toggle here")]
+    public Toggle dayNightToggle;
 
-    private void Awake()
+    void Awake()
     {
-        inputActions = new SkyboxController();
+        if (dayNightToggle == null)
+        {
+            Debug.LogError("SkyboxSwitcher: dayNightToggle reference is missing!", this);
+            enabled = false;
+            return;
+        }
+
+    
+        dayNightToggle.onValueChanged.AddListener(SetDayMode);
+
+    
+        SetDayMode(dayNightToggle.isOn);
     }
 
-    private void OnEnable()
+  
+    public void SetDayMode(bool isDay)
     {
-        inputActions.Enable();
-        inputActions.ToggleSkybox.Skybox.performed += OnToggleSkybox; 
-    }
-
-    private void OnDisable()
-    {
-        inputActions.Disable();
-        inputActions.ToggleSkybox.Skybox.performed -= OnToggleSkybox;
-    }
-
-    private void OnToggleSkybox(InputAction.CallbackContext context)
-    {
-        RenderSettings.skybox = isDay ? skybox_night : skybox_day;
+        RenderSettings.skybox = isDay ? dayMaterial : nightMaterial;
         DynamicGI.UpdateEnvironment();
-        isDay = !isDay;
+    }
+
+    void OnDestroy()
+    {
+        if (dayNightToggle != null)
+            dayNightToggle.onValueChanged.RemoveListener(SetDayMode);
     }
 }
