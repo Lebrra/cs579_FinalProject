@@ -20,6 +20,11 @@ public class FishingManager : MonoBehaviour
     [SerializeField]
     private float hookThreshold = 1F;
     
+    [Space, SerializeField]
+    private float bobberReturnThreshold = 0.2F;
+    [SerializeField]
+    private float bobberReturnSpeed = 2F;
+    
     private bool isFishing = false;
     private Rigidbody activeBobber = null;
     private Vector3 lastWandPos = Vector3.zero;
@@ -46,7 +51,7 @@ public class FishingManager : MonoBehaviour
         }
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (isFishing) // && activeBobber != null
         {
@@ -62,7 +67,6 @@ public class FishingManager : MonoBehaviour
             var point = currentBobberPos + projection;
             
             var dist = Vector3.Distance(currentBobberPos, point) - Vector3.Distance(currentBobberPos, lastWandPos);
-            Debug.Log($"dist = {dist}");
             if (dist > hookThreshold)
             {
                 isFishing = false;
@@ -76,10 +80,14 @@ public class FishingManager : MonoBehaviour
 
     public void ThrowBobber(Vector3 startPos, MagicParticleManager.Particle type)
     {
+        isFishing = false;
+        if (returnTween != null) StopCoroutine(returnTween);
+        
         // todo: different bobbers for different fish
         activeBobber = bobbers[0];
         
         activeBobber.linearVelocity = Vector3.zero;
+        activeBobber.useGravity = true;
         activeBobber.transform.position = startPos;
         activeBobber.gameObject.SetActive(true);
         
@@ -94,9 +102,22 @@ public class FishingManager : MonoBehaviour
 
     IEnumerator ReturnBobber(Rigidbody bobber)
     {
-        // todo: tween bobber back
-        yield return new WaitForSeconds(0.5F);
+        activeBobber.useGravity = false;
         
+        // let's accelerate for fun
+        float orgDist = Vector3.Distance(bobber.transform.position, wandPoint.position);
+        
+        float dist = orgDist;
+        while (dist > bobberReturnThreshold)
+        {
+            float percentMoved = 1F - (dist / orgDist);
+            
+            bobber.transform.position = Vector3.MoveTowards(bobber.transform.position, wandPoint.position, bobberReturnSpeed * (1F + percentMoved));
+            dist = Vector3.Distance(bobber.transform.position, wandPoint.position);
+            yield return null;
+        }
+        
+        // todo: maybe catch a fish here idk
         bobber.gameObject.SetActive(false);
     }
 }
