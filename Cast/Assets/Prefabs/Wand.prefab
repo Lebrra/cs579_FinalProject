@@ -389,11 +389,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bobbers:
   - {fileID: 1515952416506888642}
-  bobberThrowForce: 20
+  bobberThrowForce: 35
   wandPoint: {fileID: 7711798989803934561}
   hookThreshold: 0.13
   bobberReturnThreshold: 0.05
-  bobberReturnSpeed: 0.03
+  bobberReturnSpeed: 0.06
   fishShowOffTime: 2
 --- !u!1001 &4944610043903936274
 PrefabInstance:

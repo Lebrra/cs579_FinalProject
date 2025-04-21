@@ -96,7 +96,7 @@ public class FishingManager : MonoBehaviour
         activeBobber.ShowFish(false);
         activeBobber.gameObject.SetActive(true);
         
-        var upwardForward = wandPoint.up + Vector3.one * 0.2F;
+        var upwardForward = wandPoint.up + Vector3.one * 0.1F;
         upwardForward.Normalize();
         activeBobber.RB.AddForce(upwardForward * bobberThrowForce);
 
