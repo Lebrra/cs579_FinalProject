@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
+using Random = UnityEngine.Random;
 
 public class Bobber : MonoBehaviour
 {
@@ -12,6 +13,15 @@ public class Bobber : MonoBehaviour
     private ParticleSystem waterParticles = null;
     [SerializeField]
     private Animator anim = null;
+    
+    [Space, SerializeField]
+    private float minRandomCantCatch = 1F;
+    [SerializeField]
+    private float maxRandomCantCatch = 6F;
+    [SerializeField]
+    private float minRandomCatch = 1F;
+    [SerializeField]
+    private float maxRandomCatch = 3F;
     
     private Rigidbody rb = null;
     public Rigidbody RB
@@ -91,10 +101,10 @@ public class Bobber : MonoBehaviour
         while (true)
         {
             SetCatchState(false);
-            yield return new WaitForSeconds(1F);    // todo: randomize these
+            yield return new WaitForSeconds(Random.Range(minRandomCantCatch, maxRandomCantCatch));
             
             SetCatchState(true);
-            yield return new WaitForSeconds(3F);
+            yield return new WaitForSeconds(Random.Range(minRandomCatch, maxRandomCatch));
         }
     }
 
