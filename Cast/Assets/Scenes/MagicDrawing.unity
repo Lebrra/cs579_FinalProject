@@ -708,22 +708,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wand
       objectReference: {fileID: 0}
-    - target: {fileID: 4159943708133553342, guid: 48403e0b4a0b0134f81aa6eb4272624c, type: 3}
-      propertyPath: bobberReturnCurve.m_Curve.Array.data[0].inSlope
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4159943708133553342, guid: 48403e0b4a0b0134f81aa6eb4272624c, type: 3}
-      propertyPath: bobberReturnCurve.m_Curve.Array.data[1].inSlope
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 4159943708133553342, guid: 48403e0b4a0b0134f81aa6eb4272624c, type: 3}
-      propertyPath: bobberReturnCurve.m_Curve.Array.data[0].outSlope
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4159943708133553342, guid: 48403e0b4a0b0134f81aa6eb4272624c, type: 3}
-      propertyPath: bobberReturnCurve.m_Curve.Array.data[1].outSlope
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 5787938810229383613, guid: 48403e0b4a0b0134f81aa6eb4272624c, type: 3}
       propertyPath: m_LocalPosition.x
       value: -2.34

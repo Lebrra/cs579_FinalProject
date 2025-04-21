@@ -10,6 +10,8 @@ using UnityEngine.XR.Interaction.Toolkit.Interactors;
 // Video followed: https://www.youtube.com/watch?v=JZFfKTYSt7k
 public class WandDrawer : XRGrabInteractable
 {
+    public static InteractorHandedness HeldHand = InteractorHandedness.None;
+    
     [Space, Header("Drawing")]
     private InputDevice trackingHand;
     private bool ableToDraw = false;
@@ -75,7 +77,8 @@ public class WandDrawer : XRGrabInteractable
         base.OnSelectEntering(args);
 
         // select current hand:
-        XRNode hand = args.interactorObject.handedness == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
+        WandDrawer.HeldHand = args.interactorObject.handedness;
+        XRNode hand = HeldHand == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
         trackingHand = InputDevices.GetDeviceAtXRNode(hand);
         ableToDraw = trackingHand.isValid;
     }

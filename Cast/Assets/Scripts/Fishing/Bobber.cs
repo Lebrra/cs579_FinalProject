@@ -1,11 +1,17 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 
 public class Bobber : MonoBehaviour
 {
     [SerializeField]
     private GameObject fish = null;
+    [SerializeField]
+    private ParticleSystem waterParticles = null;
+    [SerializeField]
+    private Animator anim = null;
     
     private Rigidbody rb = null;
     public Rigidbody RB
@@ -96,7 +102,18 @@ public class Bobber : MonoBehaviour
     {
         catchFish = canCatch;
         Debug.Log("Fish on the line? " + catchFish);
-        // todo: haptics and other fun things
+        waterParticles?.gameObject.SetActive(canCatch);
+        anim?.SetBool("shake", canCatch);
+
+        XRNode hand = WandDrawer.HeldHand == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
+        if (canCatch)
+        {
+            // todo: start haptics here !
+        }
+        else
+        {
+            InputDevices.GetDeviceAtXRNode(hand).StopHaptics();
+        }
     }
     
     // this could totally be generalized as a static function - this copies the shrink from TubeRenderer.cs
