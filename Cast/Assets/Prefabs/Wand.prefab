@@ -388,12 +388,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bobbers:
-  - {fileID: 5665785190093431242}
+  - {fileID: 1515952416506888642}
   bobberThrowForce: 20
   wandPoint: {fileID: 7711798989803934561}
   hookThreshold: 0.13
   bobberReturnThreshold: 0.05
   bobberReturnSpeed: 0.03
+  fishShowOffTime: 2
 --- !u!1001 &4944610043903936274
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -451,11 +452,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: da116e9c32526f74a83028ddabbbb9ae, type: 3}
---- !u!54 &5665785190093431242 stripped
-Rigidbody:
-  m_CorrespondingSourceObject: {fileID: 738063946598655704, guid: da116e9c32526f74a83028ddabbbb9ae, type: 3}
+--- !u!114 &1515952416506888642 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5879297665785710288, guid: da116e9c32526f74a83028ddabbbb9ae, type: 3}
   m_PrefabInstance: {fileID: 4944610043903936274}
   m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d27655f97289cbe46b25b618e576bcbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &6169674123649843963 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1225503902773315049, guid: da116e9c32526f74a83028ddabbbb9ae, type: 3}

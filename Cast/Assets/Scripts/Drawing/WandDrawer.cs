@@ -120,7 +120,7 @@ public class WandDrawer : XRGrabInteractable
 
     private void CheckDrawState()
     {
-        if (drawPoint == null)
+        if (!DrawingManager.CanDraw)
             return;
         
         if (enableMouseDrawing)    // editor only
@@ -149,6 +149,7 @@ public class WandDrawer : XRGrabInteractable
         }
         if (!isDrawing && wasDrawing)   // drawing ended!
         {
+            DrawingManager.CanDraw = false;
             currentTubeRenderer.OnDrawingFinished();
         }
 

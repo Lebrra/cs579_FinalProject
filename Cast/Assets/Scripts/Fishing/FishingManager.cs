@@ -11,7 +11,7 @@ public class FishingManager : MonoBehaviour
     public static FishingManager Instance;
     
     [SerializeField]
-    private List<Rigidbody> bobbers = new List<Rigidbody>();
+    private List<Bobber> bobbers = new List<Bobber>();
     [SerializeField]
     private float bobberThrowForce = 1F;
     
@@ -25,8 +25,11 @@ public class FishingManager : MonoBehaviour
     [SerializeField]
     private float bobberReturnSpeed = 2F;
     
+    [SerializeField]
+    private float fishShowOffTime = 1F;
+    
     private bool isFishing = false;
-    private Rigidbody activeBobber = null;
+    private Bobber activeBobber = null;
     private Vector3 lastWandPos = Vector3.zero;
     
     private Coroutine returnTween = null;
@@ -86,23 +89,30 @@ public class FishingManager : MonoBehaviour
         // todo: different bobbers for different fish
         activeBobber = bobbers[0];
         
-        activeBobber.linearVelocity = Vector3.zero;
-        activeBobber.useGravity = true;
+        activeBobber.RB.linearVelocity = Vector3.zero;
+        activeBobber.RB.useGravity = true;
         activeBobber.transform.position = startPos;
+        activeBobber.transform.localScale = Vector3.one;
+        activeBobber.ShowFish(false);
         activeBobber.gameObject.SetActive(true);
         
         var upwardForward = wandPoint.up + Vector3.one * 0.2F;
         upwardForward.Normalize();
-        activeBobber.AddForce(upwardForward * bobberThrowForce);
+        activeBobber.RB.AddForce(upwardForward * bobberThrowForce);
 
         // if bobber thrown:
         isFishing = true;
         lastWandPos = new Vector3(wandPoint.position.x, 0F, wandPoint.position.z);
     }
 
-    IEnumerator ReturnBobber(Rigidbody bobber)
+    IEnumerator ReturnBobber(Bobber bobber)
     {
-        activeBobber.useGravity = false;
+        // but first did we catch?
+        var caught = bobber.TryCatchFish();
+        yield return null;
+
+        bobber.RB.useGravity = false;
+        if (caught) bobber.ShowFish(true);
         
         // let's accelerate for fun
         float orgDist = Vector3.Distance(bobber.transform.position, wandPoint.position);
@@ -118,6 +128,30 @@ public class FishingManager : MonoBehaviour
         }
         
         // todo: maybe catch a fish here idk
+        if (caught)
+        {
+            float waitTime = 0F;
+            while (waitTime < fishShowOffTime)
+            {
+                waitTime += Time.deltaTime;
+                
+                // keep bobber position at wand point
+                bobber.transform.position = wandPoint.position;
+                yield return null;
+            }
+            // keep the hovering fish until the tweenout is done
+            StartCoroutine(bobber.TweenOut());
+            waitTime = DrawingManager.Instance?.CastTime ?? 2F;
+            while (waitTime > 0F)
+            {
+                waitTime -= Time.deltaTime;
+                bobber.transform.position = wandPoint.position;
+                yield return null;
+            }
+
+        }
+        
         bobber.gameObject.SetActive(false);
+        DrawingManager.CanDraw = true;
     }
 }

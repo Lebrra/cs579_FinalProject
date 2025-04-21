@@ -240,6 +240,7 @@ public class TubeRenderer : MonoBehaviour
             else if (!DebugDrawer.Instance)
             {
                 StartCoroutine(TweenOut(null));
+                DrawingManager.CanDraw = true;
             }
         }
     }
@@ -255,7 +256,7 @@ public class TubeRenderer : MonoBehaviour
         StartCoroutine(TweenOut(orgRef));
     }
 
-    IEnumerator TweenOut(GameObject orgRef, System.Action postAction = null) // might convert to mid-action to happen halfway through instead
+    IEnumerator TweenOut(GameObject orgRef) // might convert to mid-action to happen halfway through instead
     {
         // goal: have the spell bob for a bit before shrinking and disappearing
         var shrinkCurve = DrawingManager.Instance?.ShrinkCurve ?? AnimationCurve.Linear(0F, 0F, 1F, 1F);
@@ -283,10 +284,7 @@ public class TubeRenderer : MonoBehaviour
             parent.localScale = Vector3.one * (shrinkCurve.Evaluate(curvePercent));
             yield return null;
         }
-        
-        // onto whatever happens next
-        postAction?.Invoke();
-        
+
         // all done shrinking => cleanup time (ideally would like TubeRenderers to be using object pooling too, but eh
         transform.gameObject.SetActive(false);
         if (!DebugDrawer.Instance)  // don't destroy these if we are debugging
