@@ -7,6 +7,7 @@ using UnityEngine;
 public class DrawingManager : MonoBehaviour
 {
     public static DrawingManager Instance = null;
+    public static bool CanDraw = true;
     
     [SerializeField]
     List<DrawingData> drawingsToMatch = new List<DrawingData>();

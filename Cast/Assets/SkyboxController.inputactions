@@ -1,0 +1,34 @@
+{
+    "name": "SkyboxController",
+    "maps": [
+        {
+            "name": "ToggleSkybox",
+            "id": "f06d40c9-76c7-46d1-b6a9-176aec630c9c",
+            "actions": [
+                {
+                    "name": "Skybox",
+                    "type": "Button",
+                    "id": "e859437e-ba9f-474f-9055-8737af4c2c28",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "e698e816-4c10-4ddb-aee7-29a15c3a823b",
+                    "path": "<XRController>{LeftHand}/{PrimaryTrigger}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Skybox",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
