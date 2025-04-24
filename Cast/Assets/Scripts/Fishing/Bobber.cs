@@ -22,6 +22,9 @@ public class Bobber : MonoBehaviour
     private float minRandomCatch = 1F;
     [SerializeField]
     private float maxRandomCatch = 3F;
+
+    [Space, SerializeField]
+    private float hapticAmplitude = 0.5F;
     
     private Rigidbody rb = null;
     public Rigidbody RB
@@ -76,6 +79,7 @@ public class Bobber : MonoBehaviour
     public bool TryCatchFish()
     {
         bool fishCaught = catchFish;
+        PlayHaptics(-1F);
         StopFishing();
         return fishCaught;
     }
@@ -101,11 +105,28 @@ public class Bobber : MonoBehaviour
         while (true)
         {
             SetCatchState(false);
+            PlayHaptics(-1F);
             yield return new WaitForSeconds(Random.Range(minRandomCantCatch, maxRandomCantCatch));
             
             SetCatchState(true);
-            yield return new WaitForSeconds(Random.Range(minRandomCatch, maxRandomCatch));
+            var canCatchTime = Random.Range(minRandomCatch, maxRandomCatch);
+            PlayHaptics(canCatchTime - 0.2F);
+            yield return new WaitForSeconds(canCatchTime);
         }
+    }
+
+    private void PlayHaptics(float duration)
+    {
+        XRNode hand = WandDrawer.HeldHand == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
+        if (duration <= 0F)
+        {
+            InputDevices.GetDeviceAtXRNode(hand).StopHaptics();
+        }
+        else
+        {
+            InputDevices.GetDeviceAtXRNode(hand).SendHapticImpulse(0u, hapticAmplitude, duration);
+        }
+        
     }
 
     private void SetCatchState(bool canCatch)
@@ -115,15 +136,7 @@ public class Bobber : MonoBehaviour
         waterParticles?.gameObject.SetActive(canCatch);
         anim?.SetBool("shake", canCatch);
 
-        XRNode hand = WandDrawer.HeldHand == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
-        if (canCatch)
-        {
-            // todo: start haptics here !
-        }
-        else
-        {
-            InputDevices.GetDeviceAtXRNode(hand).StopHaptics();
-        }
+        // haptics queued in fishing instead since its timing-based
     }
     
     // this could totally be generalized as a static function - this copies the shrink from TubeRenderer.cs
