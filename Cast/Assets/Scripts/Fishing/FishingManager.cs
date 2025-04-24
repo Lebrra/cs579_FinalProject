@@ -85,9 +85,20 @@ public class FishingManager : MonoBehaviour
     {
         isFishing = false;
         if (returnTween != null) StopCoroutine(returnTween);
-        
+
         // todo: different bobbers for different fish
-        activeBobber = bobbers[0];
+        switch (type)
+        {
+            case MagicParticleManager.Particle.Mountain:
+                activeBobber = bobbers[0];
+                break;
+            case MagicParticleManager.Particle.Wind:
+                activeBobber = bobbers[1];
+                break;
+            default:
+                activeBobber = bobbers[2];
+                break;
+        }
         
         activeBobber.RB.linearVelocity = Vector3.zero;
         activeBobber.RB.useGravity = true;

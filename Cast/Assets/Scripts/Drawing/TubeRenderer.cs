@@ -233,30 +233,30 @@ public class TubeRenderer : MonoBehaviour
             {
                 // generate a new 3D drawing identical to this one but with the match's material, also tell ??? to start doing magic
                 var copy = Instantiate(gameObject).GetComponent<TubeRenderer>();
-                copy.GenerateCompletedMesh(result.DrawingMaterial, gameObject);
+                copy.GenerateCompletedMesh(result, gameObject);
                 gameObject.SetActive(false);
                 MagicParticleManager.Instance?.GetParticle(result.Particle, Center);
             }
             else if (!DebugDrawer.Instance)
             {
-                StartCoroutine(TweenOut(null));
+                StartCoroutine(TweenOut(null, MagicParticleManager.Particle.None));
                 DrawingManager.CanDraw = true;
             }
         }
     }
 
 
-    public void GenerateCompletedMesh(Material mat, GameObject orgRef)
+    public void GenerateCompletedMesh(DrawingData result, GameObject orgRef)
     {
         radiusOne *= 0.95F;
         radiusTwo *= 0.95F;
-        meshRenderer.material = mat;
+        meshRenderer.material = result.DrawingMaterial;
         GenerateMesh();
         
-        StartCoroutine(TweenOut(orgRef));
+        StartCoroutine(TweenOut(orgRef, result.Particle));
     }
 
-    IEnumerator TweenOut(GameObject orgRef) // might convert to mid-action to happen halfway through instead
+    IEnumerator TweenOut(GameObject orgRef, MagicParticleManager.Particle spellType) // might convert to mid-action to happen halfway through instead
     {
         // goal: have the spell bob for a bit before shrinking and disappearing
         var shrinkCurve = DrawingManager.Instance?.ShrinkCurve ?? AnimationCurve.Linear(0F, 0F, 1F, 1F);
@@ -270,7 +270,7 @@ public class TubeRenderer : MonoBehaviour
         if (orgRef != null)
         {
             yield return new WaitForSeconds(0.2F);
-            FishingManager.Instance?.ThrowBobber(Center, MagicParticleManager.Particle.None);
+            FishingManager.Instance?.ThrowBobber(Center, spellType);
             yield return new WaitForSeconds(0.2F);
         }
 

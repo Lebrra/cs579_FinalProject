@@ -5137,6 +5137,11 @@ MonoBehaviour:
   fish: {fileID: 1026435551108173947}
   waterParticles: {fileID: 2979613177718589499}
   anim: {fileID: 6579718640470539406}
+  minRandomCantCatch: 1
+  maxRandomCantCatch: 6
+  minRandomCatch: 1
+  maxRandomCatch: 3
+  hapticAmplitude: 0.5
 --- !u!1 &7136700805629911828
 GameObject:
   m_ObjectHideFlags: 0

@@ -90,6 +90,11 @@ public class WandDrawer : XRGrabInteractable
         // stop ability to draw
         ableToDraw = false;
 
+        // stop haptics
+        XRNode hand = HeldHand == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
+        HeldHand = InteractorHandedness.None;
+        InputDevices.GetDeviceAtXRNode(hand).StopHaptics();
+
         if (hoverRoutine == null)
         {
             hoverRoutine = StartCoroutine(Hover());

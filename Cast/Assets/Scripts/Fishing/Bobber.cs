@@ -117,6 +117,13 @@ public class Bobber : MonoBehaviour
 
     private void PlayHaptics(float duration)
     {
+        if (WandDrawer.HeldHand == InteractorHandedness.None)
+        {
+            InputDevices.GetDeviceAtXRNode(XRNode.LeftHand).StopHaptics();
+            InputDevices.GetDeviceAtXRNode(XRNode.RightHand).StopHaptics();
+            return;
+        }
+
         XRNode hand = WandDrawer.HeldHand == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
         if (duration <= 0F)
         {
