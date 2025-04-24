@@ -311,6 +311,7 @@ GameObject:
   - component: {fileID: 1992308734024529208}
   - component: {fileID: 3200046306293546194}
   - component: {fileID: 2031677557879560242}
+  - component: {fileID: 6669373653523801503}
   m_Layer: 3
   m_Name: InfoStand
   m_TagString: Untagged
@@ -391,6 +392,20 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6669373653523801503
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7207389970895269464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c75a4ee311f149242be4492f7f6aaf43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hoverSpeed: 4
+  hoverDist: 0.1
 --- !u!1 &7208402325837936149
 GameObject:
   m_ObjectHideFlags: 0
