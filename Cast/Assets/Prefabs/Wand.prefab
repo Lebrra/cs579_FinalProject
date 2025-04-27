@@ -111,7 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_InteractionManager: {fileID: 0}
   m_Colliders:
-  - {fileID: 4735733327040460811}
+  - {fileID: 0}
   m_InteractionLayers:
     m_Bits: 1
   m_DistanceCalculationMode: 1
@@ -237,6 +237,8 @@ MonoBehaviour:
   hoverSpeed: 4
   hoverDist: 0.01
   enableMouseDrawing: 0
+  drawSFX: {fileID: 8300000, guid: ce1f2ab8ab7e3294ba6216e8f6d91e0b, type: 3}
+  grabSFX: {fileID: 0}
 --- !u!1 &4942990717810252387
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,6 +316,8 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   castingTime: 1
+  successSFX: {fileID: 8300000, guid: b584a2b4bf3506042952420b7b8ded31, type: 3}
+  failSFX: {fileID: 8300000, guid: c51a1a7e95229a1429202b5cd3af9a9b, type: 3}
 --- !u!1 &5180731592982176375
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,6 +403,8 @@ MonoBehaviour:
   bobberReturnThreshold: 0.05
   bobberReturnSpeed: 0.06
   fishShowOffTime: 2
+  catchSFX: {fileID: 8300000, guid: f2cc8ed28f84e4740ab9db60109cd788, type: 3}
+  pullBackSFX: {fileID: 8300000, guid: 3d8de9ad1ade5be468550e5277802dbf, type: 3}
 --- !u!1001 &4944610043903936274
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -5142,6 +5142,7 @@ MonoBehaviour:
   minRandomCatch: 1
   maxRandomCatch: 3
   hapticAmplitude: 0.5
+  bubblesSFX: {fileID: 8300000, guid: e457736cb553eae42a9c7dee851a091e, type: 3}
 --- !u!1 &7136700805629911828
 GameObject:
   m_ObjectHideFlags: 0

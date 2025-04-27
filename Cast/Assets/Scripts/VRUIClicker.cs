@@ -19,6 +19,9 @@ public class VRUIClicker : MonoBehaviour
     VolumeToggle activeVolume = null;
     
     Coroutine raycasting;
+    
+    [SerializeField]
+    AudioClip clickSFX;
 
     private void Start()
     {
@@ -77,6 +80,7 @@ public class VRUIClicker : MonoBehaviour
         if (activeVolume && doClick)
         {
             activeVolume.Toggle();
+            if (clickSFX) AudioManager.Instance?.PlayClip(clickSFX);
         }
         
         yield return new WaitForSeconds(0.1F);

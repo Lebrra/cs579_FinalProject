@@ -6,18 +6,25 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance;
 
     Dictionary<AudioClip, AudioSource> sources = new();
+    
+    [SerializeField]
     AudioClip musicClip = null;
 
     private void Awake()
     {
         if (Instance) Destroy(Instance);
         Instance = this;
-        
-        var music = GetComponent<AudioSource>();
-        if (music)
+
+        if (musicClip)
         {
-            musicClip = music.clip;
-            sources.Add(musicClip, music);
+            foreach (var source in GetComponents<AudioSource>())
+            {
+                if (source.clip == musicClip)
+                {
+                    sources.Add(musicClip, source);
+                    break;
+                }
+            }
         }
     }
 
@@ -49,6 +56,8 @@ public class AudioManager : MonoBehaviour
             source = newChild.AddComponent<AudioSource>();
             sources.Add(clip, source);
             source.loop = false;
+            source.playOnAwake = false;
+            source.clip = clip;
         }
         return source;
     }
@@ -81,5 +90,13 @@ public class AudioManager : MonoBehaviour
         source.transform.SetParent(Camera.main.transform);
         source.transform.localPosition = Vector3.zero;
         source.Play();
+    }
+
+    public void StopClip(AudioClip clip)
+    {
+        if (sources.ContainsKey(clip))
+        {
+            sources[clip].Stop();
+        }
     }
 }
