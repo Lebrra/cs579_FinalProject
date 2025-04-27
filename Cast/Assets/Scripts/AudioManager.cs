@@ -5,15 +5,34 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
-    Dictionary<AudioClip, AudioSource> sources = new Dictionary<AudioClip, AudioSource>();
+    Dictionary<AudioClip, AudioSource> sources = new();
+    AudioClip musicClip = null;
 
     private void Awake()
     {
         if (Instance) Destroy(Instance);
         Instance = this;
+        
+        var music = GetComponent<AudioSource>();
+        if (music)
+        {
+            musicClip = music.clip;
+            sources.Add(musicClip, music);
+        }
     }
 
-    public void PlayClip(AudioClip clip, Vector3 position, float volume = 1F)
+    public static void ToggleMusic(bool on)
+    {
+        if (Instance)
+        {
+            if (Instance.sources.ContainsKey(Instance.musicClip))
+            {
+                Instance.sources[Instance.musicClip].mute = !on;
+            }
+        }
+    }
+
+    private AudioSource GetSource(AudioClip clip)
     {
         AudioSource source;
 
@@ -31,10 +50,36 @@ public class AudioManager : MonoBehaviour
             sources.Add(clip, source);
             source.loop = false;
         }
-
+        return source;
+    }
+    
+    // plays clip at position of provided parent (assumes movement of parent)
+    public void PlayClip(AudioClip clip, Transform parent, float volume = 1F)
+    {
+        var source = GetSource(clip);
         source.volume = volume;
-        if (position == null) source.transform.localPosition = Vector3.zero;
-        else source.transform.position = position;
+        if (parent != null) source.transform.SetParent(parent);
+        source.transform.localPosition = Vector3.zero;
+        source.Play();
+    }
+
+    // plays clip at provided position (assumes no movement)
+    public void PlayClip(AudioClip clip, Vector3 globalPosition, float volume = 1F)
+    {
+        var source = GetSource(clip);
+        source.volume = volume;
+        source.transform.SetParent(null);
+        source.transform.position = globalPosition;
+        source.Play();
+    }
+    
+    // no position specified == play at camera
+    public void PlayClip(AudioClip clip, float volume = 1F)
+    {
+        var source = GetSource(clip);
+        source.volume = volume;
+        source.transform.SetParent(Camera.main.transform);
+        source.transform.localPosition = Vector3.zero;
         source.Play();
     }
 }
