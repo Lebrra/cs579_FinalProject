@@ -11,10 +11,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/MagicDrawing.unity
     guid: e395a3f99a1c5154c90c755d64ef0e6c
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/Fishing Market.unity
     guid: e8b138f60b66b46a49d0e72f0dad7915
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Demo1.unity
     guid: a430cbfeb0def864ea12c6c984111b1e
   m_configObjects:

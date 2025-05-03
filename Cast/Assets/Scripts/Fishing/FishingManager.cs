@@ -33,6 +33,11 @@ public class FishingManager : MonoBehaviour
     private Vector3 lastWandPos = Vector3.zero;
     
     private Coroutine returnTween = null;
+    
+    [Space, SerializeField]
+    AudioClip catchSFX;
+    [SerializeField]
+    AudioClip pullBackSFX;
 
     private void Awake()
     {
@@ -85,9 +90,20 @@ public class FishingManager : MonoBehaviour
     {
         isFishing = false;
         if (returnTween != null) StopCoroutine(returnTween);
-        
+
         // todo: different bobbers for different fish
-        activeBobber = bobbers[0];
+        switch (type)
+        {
+            case MagicParticleManager.Particle.Mountain:
+                activeBobber = bobbers[0];
+                break;
+            case MagicParticleManager.Particle.Wind:
+                activeBobber = bobbers[1];
+                break;
+            default:
+                activeBobber = bobbers[2];
+                break;
+        }
         
         activeBobber.RB.linearVelocity = Vector3.zero;
         activeBobber.RB.useGravity = true;
@@ -109,10 +125,15 @@ public class FishingManager : MonoBehaviour
     {
         // but first did we catch?
         var caught = bobber.TryCatchFish();
+        if (pullBackSFX && bobber.IsFishing) AudioManager.Instance?.PlayClip(pullBackSFX, bobber.transform, 0.5F);
         yield return null;
 
         bobber.RB.useGravity = false;
-        if (caught) bobber.ShowFish(true);
+        if (caught)
+        {
+            bobber.ShowFish(true);
+            if (catchSFX) AudioManager.Instance?.PlayClip(catchSFX, bobber.transform, 0.5F);
+        }
         
         // let's accelerate for fun
         float orgDist = Vector3.Distance(bobber.transform.position, wandPoint.position);

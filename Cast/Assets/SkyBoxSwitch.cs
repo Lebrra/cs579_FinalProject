@@ -13,6 +13,12 @@ public class SkyboxSwitcher : MonoBehaviour
     [Tooltip("Drag your Day/Night Toggle here")]
     public Toggle dayNightToggle;
 
+    public Toggle audioToggle;
+
+   public AudioClip nightSoundClip;
+    private AudioManager audioManager;
+    private AudioSource nightAudioSource;
+
     void Awake()
     {
         if (dayNightToggle == null)
@@ -22,10 +28,18 @@ public class SkyboxSwitcher : MonoBehaviour
             return;
         }
 
-    
+           audioManager = FindFirstObjectByType<AudioManager>();
+        if (audioManager == null)
+        {
+            Debug.LogError("SkyboxSwitcher: AudioManager not found in the scene!", this);
+        }
+
         dayNightToggle.onValueChanged.AddListener(SetDayMode);
 
-    
+    if (audioToggle != null)
+        {
+            audioToggle.onValueChanged.AddListener(onAudioToggleChanged);
+        }
         SetDayMode(dayNightToggle.isOn);
     }
 
@@ -34,6 +48,67 @@ public class SkyboxSwitcher : MonoBehaviour
     {
         RenderSettings.skybox = isDay ? dayMaterial : nightMaterial;
         DynamicGI.UpdateEnvironment();
+
+            if (!isDay)
+        {
+         
+            if (audioManager != null && nightSoundClip != null && (audioToggle == null || audioToggle.isOn))
+            {
+              
+               
+                GameObject soundObject = new GameObject("NightSound");
+                nightAudioSource = soundObject.AddComponent<AudioSource>();
+                nightAudioSource.clip = nightSoundClip;
+                nightAudioSource.loop = true; 
+                nightAudioSource.volume = 0.3f;
+                nightAudioSource.spatialBlend = 0f; 
+                nightAudioSource.Play();
+                DontDestroyOnLoad(soundObject); 
+               
+                
+            }
+        }
+         else
+        {
+            StopNightSound();
+            // Switching back to day
+            // if (nightAudioSource != null)
+            // {
+            //     nightAudioSource.Stop();
+            //     Destroy(nightAudioSource.gameObject);
+            //     nightAudioSource = null;
+            // }
+        }
+    }
+
+    public void onAudioToggleChanged(bool isMuted){
+        bool isNight = !dayNightToggle.isOn;
+        if(isNight) {
+            if(!isMuted){
+                StopNightSound();
+            }
+            else if (nightAudioSource == null && nightSoundClip != null){
+                 GameObject soundObject = new GameObject("NightSound");
+                nightAudioSource = soundObject.AddComponent<AudioSource>();
+                nightAudioSource.clip = nightSoundClip;
+                nightAudioSource.loop = true;
+                nightAudioSource.volume = 0.3f;
+                nightAudioSource.spatialBlend = 0f;
+                nightAudioSource.Play();
+                DontDestroyOnLoad(soundObject);
+            }
+        }
+
+    }
+
+    private void StopNightSound()
+    {
+        if (nightAudioSource != null)
+        {
+            nightAudioSource.Stop();
+            Destroy(nightAudioSource.gameObject);
+            nightAudioSource = null;
+        }
     }
 
     void OnDestroy()

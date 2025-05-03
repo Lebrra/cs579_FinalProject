@@ -25,6 +25,8 @@ public class Bobber : MonoBehaviour
 
     [Space, SerializeField]
     private float hapticAmplitude = 0.5F;
+    [SerializeField]
+    AudioClip bubblesSFX;
     
     private Rigidbody rb = null;
     public Rigidbody RB
@@ -44,6 +46,8 @@ public class Bobber : MonoBehaviour
     private bool catchFish = false;
     
     private Coroutine fishingState = null;
+    
+    public bool IsFishing => fishingState != null;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -117,6 +121,13 @@ public class Bobber : MonoBehaviour
 
     private void PlayHaptics(float duration)
     {
+        if (WandDrawer.HeldHand == InteractorHandedness.None)
+        {
+            InputDevices.GetDeviceAtXRNode(XRNode.LeftHand).StopHaptics();
+            InputDevices.GetDeviceAtXRNode(XRNode.RightHand).StopHaptics();
+            return;
+        }
+
         XRNode hand = WandDrawer.HeldHand == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
         if (duration <= 0F)
         {
@@ -135,6 +146,11 @@ public class Bobber : MonoBehaviour
         Debug.Log("Fish on the line? " + catchFish);
         waterParticles?.gameObject.SetActive(canCatch);
         anim?.SetBool("shake", canCatch);
+        if (bubblesSFX)
+        {
+            if (canCatch) AudioManager.Instance?.PlayClip(bubblesSFX, transform, 0.5F);
+            else AudioManager.Instance?.StopClip(bubblesSFX);
+        }
 
         // haptics queued in fishing instead since its timing-based
     }

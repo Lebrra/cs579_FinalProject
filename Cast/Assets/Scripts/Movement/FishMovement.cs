@@ -9,18 +9,17 @@ public class FishMovement : MonoBehaviour {
     // how often they turn direction, and what the current diection is.
     public float speed = .5f;
     public float turnSpeed = 2f;
-    public float changeDirectionInterval = 1.5f;
+    private float changeDirectionInterval;
     public Transform pond;
-
+    public float minY = 0f;
+    public float maxY = 0.2f;
     private Vector3 targetDirection;
-    private Vector3 minBounds;
-    private Vector3 maxBounds;
+    private float pondRadius;
 
     // Sets a random direction and changes it at a set interval.
     void Start() {
-        Vector3 size = pond.localScale / 2;
-        minBounds = pond.position - size;
-        maxBounds = pond.position + size;
+        pondRadius = (pond.localScale.x * 0.5f);
+        changeDirectionInterval = Random.Range(0.5f, 5.0f);
         setRandomDirection();
         InvokeRepeating("setRandomDirection", changeDirectionInterval, changeDirectionInterval);
     }
@@ -32,21 +31,29 @@ public class FishMovement : MonoBehaviour {
         // Rotate toward direction
         Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
         transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-        KeepWithinBounds();
+        KeepWithinCylinder();
     }
 
     // Sets a random direction
     public void setRandomDirection() {
-        targetDirection = new Vector3(Random.Range(-1f,1f), Random.Range(-0.2f, 0.2f), Random.Range(-1f, 1f)).normalized;
+        targetDirection = new Vector3(Random.Range(-1f,1f), 0f, Random.Range(-1f, 1f)).normalized;
     }
 
-    void KeepWithinBounds() {
+    void KeepWithinCylinder() {
         Vector3 pos = transform.position;
-        if (pos.x < minBounds.x || pos.x > maxBounds.x || pos.y < minBounds.y || pos.y > maxBounds.y || pos.z < minBounds.z || pos.z > maxBounds.z) {
-            targetDirection = (pond.position - pos).normalized;
+        Vector3 pondCenterXZ = new Vector3(pond.position.x, 0, pond.position.z);
+        Vector3 fishXZ = new Vector3(pos.x, 0, pos.z);
+        float distanceFromCenter = Vector3.Distance(fishXZ, pondCenterXZ);
+
+        if (distanceFromCenter > pondRadius) {
+            // Steer fish back toward the center if it's outside the radius
+            Vector3 toCenter = (pond.position - pos).normalized;
+            toCenter.y = targetDirection.y; // Keep vertical movement as is
+            targetDirection = toCenter;
         }
 
-        pos.y = Mathf.Clamp(pos.y, minBounds.y, maxBounds.y);
+        // Clamp vertical position within pond height
+        pos.y = Mathf.Clamp(pos.y, minY, maxY);
         transform.position = pos;
     }
 }

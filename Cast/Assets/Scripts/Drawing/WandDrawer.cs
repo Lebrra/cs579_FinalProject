@@ -47,6 +47,11 @@ public class WandDrawer : XRGrabInteractable
     bool wasDrawing = false;
     
     int particleCounter = 0;
+    
+    [SerializeField]
+    AudioClip drawSFX;
+    [SerializeField]
+    AudioClip grabSFX;
 
     private void Start()
     {
@@ -81,6 +86,7 @@ public class WandDrawer : XRGrabInteractable
         XRNode hand = HeldHand == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
         trackingHand = InputDevices.GetDeviceAtXRNode(hand);
         ableToDraw = trackingHand.isValid;
+        if (grabSFX) AudioManager.Instance?.PlayClip(grabSFX, transform);
     }
 
     protected override void OnSelectExiting(SelectExitEventArgs args)
@@ -89,6 +95,12 @@ public class WandDrawer : XRGrabInteractable
 
         // stop ability to draw
         ableToDraw = false;
+
+        // stop haptics
+        XRNode hand = HeldHand == InteractorHandedness.Left ? XRNode.LeftHand : XRNode.RightHand;
+        HeldHand = InteractorHandedness.None;
+        InputDevices.GetDeviceAtXRNode(hand).StopHaptics();
+        if (grabSFX) AudioManager.Instance?.PlayClip(grabSFX, transform);
 
         if (hoverRoutine == null)
         {
@@ -180,9 +192,13 @@ public class WandDrawer : XRGrabInteractable
         currentTubeRenderer.SetPositions(points.ToArray());
         currentTubeRenderer.GenerateMesh();
         
-        // particles for fun, but don't do them on every single vertex
-        particleCounter = (particleCounter + 1) % 5;
-        if (particleCounter == 0) MagicParticleManager.Instance?.GetParticle(MagicParticleManager.Particle.DrawingStars, position);
+        // particles for fun, but don't do them on every single vertex | the sfx delay even more
+        particleCounter++;
+        if (particleCounter % 5 == 0)
+        {
+            MagicParticleManager.Instance?.GetParticle(MagicParticleManager.Particle.DrawingStars, position);
+            if (drawSFX && particleCounter % 10 == 0) AudioManager.Instance?.PlayClip(drawSFX, drawPoint, 0.5F);
+        }
     }
 
     IEnumerator Hover()

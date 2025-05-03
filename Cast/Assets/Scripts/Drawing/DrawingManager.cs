@@ -29,6 +29,11 @@ public class DrawingManager : MonoBehaviour
     [SerializeField]
     float castingTime = 2F;
     
+    [Space, SerializeField]
+    AudioClip successSFX;
+    [SerializeField]
+    AudioClip failSFX;
+    
     public AnimationCurve ShrinkCurve => castingShrinkCurve;
     public float CastTime => castingTime;
 
@@ -105,11 +110,13 @@ public class DrawingManager : MonoBehaviour
         if (match < 0)
         {
             Debug.Log("I don't think any match");
+            if (failSFX) AudioManager.Instance?.PlayClip(failSFX, position, 0.5F);
             return null;
         }
         else
         {
             Debug.Log($"I think the closest match is the {drawingsToMatch[match].name}");
+            if (successSFX) AudioManager.Instance?.PlayClip(successSFX, position, 0.5F);
             Debug.Log(latestCompareData[match].ToString);
             if (DebugDrawer.Instance)
             {
