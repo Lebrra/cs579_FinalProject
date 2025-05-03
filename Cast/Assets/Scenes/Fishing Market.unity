@@ -27369,6 +27369,18 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 8415518232351049646, guid: b6c994caae33c9a4caf4807e1d42940b, type: 3}
+      propertyPath: m_text
+      value: 'Use the grip button to grab the wand.
+
+        While holding the wand,
+        press trigger to draw.
+
+        Draw a spell to fish!
+
+        Flick the
+        wand back to reel in the bobber when you feel the fish tugging.'
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -54708,6 +54720,7 @@ MonoBehaviour:
   dayMaterial: {fileID: 2100000, guid: f7ef2532c28dd4a84bbc63ae83df3b8b, type: 2}
   nightMaterial: {fileID: 2100000, guid: 5f6aff4f9bb1641a68d38761a1cca3d0, type: 2}
   dayNightToggle: {fileID: 1075227118}
+  audioToggle: {fileID: 0}
   nightSoundClip: {fileID: 8300000, guid: fc637f6f343543c469360aac98399b46, type: 3}
 --- !u!1 &2036999401 stripped
 GameObject:
