@@ -54708,7 +54708,7 @@ MonoBehaviour:
   dayMaterial: {fileID: 2100000, guid: f7ef2532c28dd4a84bbc63ae83df3b8b, type: 2}
   nightMaterial: {fileID: 2100000, guid: 5f6aff4f9bb1641a68d38761a1cca3d0, type: 2}
   dayNightToggle: {fileID: 1075227118}
-  nightSoundClip: {fileID: 0}
+  nightSoundClip: {fileID: 8300000, guid: fc637f6f343543c469360aac98399b46, type: 3}
 --- !u!1 &2036999401 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8398900807137188256, guid: 70eb163c2558dd14d97f3b3f6621756a, type: 3}
